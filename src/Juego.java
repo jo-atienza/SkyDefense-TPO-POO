@@ -115,4 +115,41 @@ public class Juego {
     public boolean isJuegoTerminado() {
         return juegoTerminado;
     }
+    // Para que la GUI mueva el avión con las flechitas
+    public void moverAvionIzquierda() {
+        if (!juegoTerminado) this.avion.moverHorizontal(-20.0);
+    }
+
+    public void moverAvionDerecha() {
+        if (!juegoTerminado) this.avion.moverHorizontal(20.0);
+    }
+
+    public void subirAvion() {
+        if (!juegoTerminado) this.avion.cambiarAltitud(20.0);
+    }
+
+    public void bajarAvion() {
+        if (!juegoTerminado) this.avion.cambiarAltitud(-20.0);
+    }
+
+    // Getters para que la GUI pueda dibujar los elementos
+    public Avion getAvion() {
+        return avion;
+    }
+
+    public Escuadron getEscuadron() {
+        return escuadron;
+    }
+
+    public List<Misil> getMisilesEnElAire() {
+        return misilesEnElAire;
+    }
+
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    public Nivel getNivelActual() {
+        return nivelActual;
+    }
 }
