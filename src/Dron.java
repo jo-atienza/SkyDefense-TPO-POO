@@ -25,24 +25,21 @@ public class Dron extends EntidadMovil {
         }
     }
 
-    // El dron es el "Creador" del misil según tu diagrama
+    // El dron es el "Creador" del misil
     public Misil disparar() {
         // Los misiles descienden en línea recta desde la posición del dron que los lanzó
-        // Retornamos un nuevo misil pasándole la X y la Y (altitud) actuales del dron
         return new Misil(this.posicionX, this.altitud);
     }
 
     // Método para que el controlador o el escuadrón sepa cuándo crear un misil
     public boolean verificarDisparo() {
-        // La frecuencia de disparo determinará la probabilidad de disparar en este "frame" o turno.
-        // Usamos Math.random() como una forma sencilla de evaluarlo.
+        // Usamos Math.random() como una forma sencilla de evaluar la frecuencia de disparo
         return Math.random() < frecuenciaDisparo;
     }
 
     // Método para aplicar el incremento de dificultad
     public void actualizarVelocidades(double factorIncremento) {
         // Cada nuevo nivel incrementa dichas velocidades en un 15%
-        // factorIncremento vendrá de la clase Nivel (ej: 1.15)
         this.velocidadDesplazamiento *= factorIncremento;
         this.frecuenciaDisparo *= factorIncremento;
     }

@@ -18,20 +18,13 @@ public class Avion extends EntidadMovil {
     // Sobreescribimos el método abstracto obligatorio de la clase padre
     @Override
     public void mover() {
-        // En un juego, el movimiento del avión suele estar dictado por los controles
-        // del teclado (que maneja el controlador). Podés dejar este método genérico
-        // vacío o usarlo para actualizar su estado general en cada "frame".
     }
 
-    // Método específico del avión para desplazarse de izquierda a derecha
-    public void moverHorizontal(double cantidad) {
-        this.posicionX += cantidad;
-    }
-
-    // Método para subir o bajar, validando que no rompa las reglas del TP
-    public void cambiarAltitud(double cantidad) {
-        this.altitud += cantidad;
-        limitarAltitud(); // Llamamos al método privado para que corrija si se pasó
+    // --- OVERLOAD (Sobrecarga): Reemplaza a moverHorizontal y cambiarAltitud ---
+    public void mover(double deltaX, double deltaY) {
+        this.posicionX += deltaX;
+        this.altitud += deltaY;
+        limitarAltitud();
     }
 
     // Método de apoyo interno (private) para mantener la cohesión

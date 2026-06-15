@@ -2,7 +2,7 @@ public class Nivel {
 
     private int numeroNivel;
 
-    // Constante de incremento de dificultad que pide el TP
+    // Constante de incremento de dificultad
     private static final double INCREMENTO_DIFICULTAD = 0.15;
 
     // Constructor

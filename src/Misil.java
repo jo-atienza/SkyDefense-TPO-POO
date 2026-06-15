@@ -6,18 +6,17 @@ public class Misil extends EntidadMovil {
     public Misil(double posicionX, double altitud) {
         super(posicionX, altitud);
 
-        // El TP pide que la altitud de detonación se defina en el momento del lanzamiento
+        //  La altitud de detonación se define en el momento del lanzamiento
         this.altitudDetonacion = generarAltitudDetonacion();
 
-        // Le ponemos una velocidad base inicial provisoria
+        // Velocidad base inicial provisoria
         this.velocidadCaida = 50.0;
     }
 
     // Cumplimos con el contrato de EntidadMovil
     @Override
     public void mover() {
-        // Los misiles descienden en línea recta [cite: 10]
-        // Por lo tanto, solo restamos a la altitud en el eje Y (no tocamos la posición X)
+        // Los misiles descienden en línea recta
         this.altitud -= velocidadCaida;
     }
 
