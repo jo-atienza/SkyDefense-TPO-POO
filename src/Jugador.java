@@ -1,3 +1,4 @@
+import excepciones.*;
 public class Jugador {
 
     private int puntaje;
@@ -6,6 +7,9 @@ public class Jugador {
     private int proximoObjetivoVida;
 
     public Jugador(int vidasIniciales) {
+        if (vidasIniciales <= 0) {
+            throw new ParametroInvalidoException("Las vidas iniciales no pueden ser cero o negativas.");
+        }
         this.puntaje = 0;
         this.vidas = vidasIniciales;
         this.proximoObjetivoVida = 1000;

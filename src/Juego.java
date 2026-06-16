@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import excepciones.*;
 
 public class Juego {
     private Nivel nivelActual;
@@ -66,33 +67,17 @@ public class Juego {
     public boolean isJuegoTerminado() {
         return juegoTerminado;
     }
-    // Controles de movimiento para la interfaz gráfica
-    public void moverAvionIzquierda() {
-        if (!juegoTerminado) this.avion.mover(-20.0, 0.0);
-    }
-    public void moverAvionDerecha() {
-        if (!juegoTerminado) this.avion.mover(20.0, 0.0);
-    }
-    public void subirAvion() {
-        if (!juegoTerminado) this.avion.mover(0.0, 20.0);
-    }
-    public void bajarAvion() {
-        if (!juegoTerminado) this.avion.mover(0.0, -20.0);
+    //UNIFICAMOS LOS MOVIMIENTOS EN UNA SOLA FUNCIÓN
+    public void moverAvion(double deltaX, double deltaY) {
+        if (juegoTerminado) {
+            throw new JuegoYaFinalizadoException("Mover Avión (" + deltaX + ", " + deltaY + ")");
+        }
+        this.avion.mover(deltaX, deltaY);
     }
     // Getters para el renderizado de la interfaz
-    public Avion getAvion() {
-        return avion;
-    }
-    public Escuadron getEscuadron() {
-        return escuadron;
-    }
-    public List<Misil> getMisilesEnElAire() {
-        return misilesEnElAire;
-    }
-    public Jugador getJugador() {
-        return jugador;
-    }
-    public Nivel getNivelActual() {
-        return nivelActual;
-    }
+    public Avion getAvion() { return avion; }
+    public Escuadron getEscuadron() { return escuadron; }
+    public List<Misil> getMisilesEnElAire() { return misilesEnElAire; }
+    public Jugador getJugador() { return jugador; }
+    public Nivel getNivelActual() { return nivelActual; }
 }

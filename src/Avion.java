@@ -1,3 +1,4 @@
+import excepciones.AltitudFueraDeRangoException;
 public class Avion extends EntidadMovil {
 
     private double energia;
@@ -9,8 +10,10 @@ public class Avion extends EntidadMovil {
     // Constructor: Usamos 'super' para enviarle la X y la altitud a EntidadMovil
     public Avion(double posicionX, double altitud, double energiaInicial) {
         super(posicionX, altitud);
+        if (altitud < 1000.0 || altitud > 5000.0) {
+            throw new AltitudFueraDeRangoException(altitud);
+        }
         this.energia = energiaInicial;
-
         // Validación inicial por si se crea fuera de los límites
         limitarAltitud();
     }
