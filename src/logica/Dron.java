@@ -1,3 +1,5 @@
+package logica;
+
 public class Dron extends EntidadMovil {
 
     private boolean ladoInicio; // true = izquierda, false = derecha (por ejemplo)

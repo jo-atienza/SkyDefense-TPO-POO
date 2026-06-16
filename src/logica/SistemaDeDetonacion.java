@@ -1,3 +1,5 @@
+package logica;
+
 public class SistemaDeDetonacion {
 
     public double calcularDistancia(EntidadMovil misil, EntidadMovil avion) {

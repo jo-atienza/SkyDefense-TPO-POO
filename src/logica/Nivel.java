@@ -1,3 +1,5 @@
+package logica;
+
 public class Nivel {
 
     private int numeroNivel;

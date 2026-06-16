@@ -1,3 +1,5 @@
+package logica;
+
 import excepciones.AltitudFueraDeRangoException;
 public class Avion extends EntidadMovil {
 

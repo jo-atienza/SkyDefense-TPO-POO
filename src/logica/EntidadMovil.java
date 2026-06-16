@@ -1,3 +1,5 @@
+package logica;
+
 public abstract class EntidadMovil {
     protected double posicionX;
     protected double altitud;

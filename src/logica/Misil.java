@@ -1,3 +1,5 @@
+package logica;
+
 public class Misil extends EntidadMovil {
 
     private double altitudDetonacion;

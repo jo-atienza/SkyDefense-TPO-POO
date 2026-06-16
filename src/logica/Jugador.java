@@ -1,3 +1,5 @@
+package logica;
+
 import excepciones.*;
 public class Jugador {
 

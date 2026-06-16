@@ -1,3 +1,5 @@
+package logica;
+
 public class Explosion {
 
     private double dañoCalculado;
