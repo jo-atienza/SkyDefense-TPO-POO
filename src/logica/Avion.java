@@ -42,12 +42,12 @@ public class Avion extends EntidadMovil {
     }
 
     // Método para cuando el SistemaDeDetonacion le reste porcentaje de energía
-    public void recibirDaño(double porcentajeDanio) {
-        // Asumiendo que el daño viene en porcentaje (ej: 0.20 para 20%)
-        double energiaPerdida = this.energia * porcentajeDanio;
+    public void recibirDaño(double porcentajeDaño) {
+        // Multiplicamos por 100.0 fijo, no por this.energia
+        double energiaPerdida = 100.0 * porcentajeDaño;
         this.energia -= energiaPerdida;
 
-        if (this.energia < 0) {
+        if (this.energia <= 0) {
             this.energia = 0;
         }
     }

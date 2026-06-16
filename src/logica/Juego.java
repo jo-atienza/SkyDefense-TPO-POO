@@ -56,9 +56,19 @@ public class Juego {
         iniciarNivel();
     }
     public void verificarGameOver() {
-        if (this.jugador.getVidas() <= 0 || this.avion.getEnergia() <= 0) {
+        // 1. Si nos quedamos sin energía, se cobra una vida
+        if (this.avion.getEnergia() <= 0) {
+            this.jugador.perderVida();
+
+            // Si aún nos quedan vidas, restauramos el motor al 100% para seguir
+            if (this.jugador.getVidas() > 0) {
+                this.avion.setEnergia(100.0);
+            }
+        }
+
+        // 2. El Game Over definitivo solo ocurre si las vidas se agotan
+        if (this.jugador.getVidas() <= 0) {
             this.juegoTerminado = true;
-            System.out.println("¡Game Over!");
         }
     }
     public void verificarFinNivel() {

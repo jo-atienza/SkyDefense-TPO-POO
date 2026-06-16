@@ -8,10 +8,10 @@ public class Misil extends EntidadMovil {
     public Misil(double posicionX, double altitud) {
         super(posicionX, altitud);
 
-        //  La altitud de detonación se define en el momento del lanzamiento
-        this.altitudDetonacion = generarAltitudDetonacion();
+        // Le pasamos la altitud inicial para que el techo de explosión sea lógico
+        this.altitudDetonacion = generarAltitudDetonacion(altitud);
 
-        // Velocidad base inicial provisoria
+        // Velocidad base inicial
         this.velocidadCaida = 50.0;
     }
 
@@ -22,11 +22,18 @@ public class Misil extends EntidadMovil {
         this.altitud -= velocidadCaida;
     }
 
-    // Método interno para calcular la explosión
-    private double generarAltitudDetonacion() {
-        // El TP pide un valor aleatorio comprendido entre 1200 y 4500 metros [cite: 12]
+    // Método interno para calcular la explosión (AHORA CON LÓGICA CORREGIDA)
+    private double generarAltitudDetonacion(double altitudLanzamiento) {
         double minimo = 1200.0;
-        double maximo = 4500.0;
+
+        // El punto máximo de detonación será 200 metros por debajo del dron
+        double maximo = altitudLanzamiento - 200.0;
+
+        // Por las dudas, si el dron volaba muy bajo, evitamos que el máximo rompa la matemática
+        if (maximo <= minimo) {
+            maximo = minimo + 100.0;
+        }
+
         return minimo + (Math.random() * (maximo - minimo));
     }
 
