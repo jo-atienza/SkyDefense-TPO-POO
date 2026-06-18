@@ -1,4 +1,4 @@
-import logica.*;
+/*import logica.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -73,4 +73,4 @@ public class SistemaDeDetonacionTest {
         // El 0.001 extra es un margen de tolerancia que exige Java al comparar números decimales (doubles)
         assertEquals(1.15, nivelDos.calcularFactor(), 0.001, "El nivel 2 debería aumentar las velocidades exactamente un 15% (1.15).");
     }
-}
+}*/

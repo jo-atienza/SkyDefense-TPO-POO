@@ -2,72 +2,59 @@ package logica;
 
 public class Dron extends EntidadMovil {
 
-    private boolean ladoInicio; // true = izquierda, false = derecha (por ejemplo)
-    private double velocidadDesplazamiento;
-    private double frecuenciaDisparo;
+    private boolean moviendoDerecha;
+    private double velocidadHorizontal;
+    private double probabilidadDisparo;
 
-    // Constructor: Usamos super() para las variables heredadas
-    public Dron(double posicionX, double altitud, boolean ladoInicio, double velocidadDesplazamiento, double frecuenciaDisparo) {
+    // NUEVAS REGLAS DE PATRULLAJE
+    private int municion;
+    private boolean retirandose;
+
+    public Dron(double posicionX, double altitud, boolean moviendoDerecha, double velocidadHorizontal, double probabilidadDisparo) {
         super(posicionX, altitud);
-        this.ladoInicio = ladoInicio;
-        this.velocidadDesplazamiento = velocidadDesplazamiento;
-        this.frecuenciaDisparo = frecuenciaDisparo;
+        this.moviendoDerecha = moviendoDerecha;
+        this.velocidadHorizontal = velocidadHorizontal;
+        this.probabilidadDisparo = probabilidadDisparo;
+
+        // Cada dron va a disparar 5 misiles antes de quedarse sin balas y huir
+        this.municion = 5;
+        this.retirandose = false;
     }
 
-    // Cumplimos con el contrato de EntidadMovil
     @Override
     public void mover() {
-        // Los drones enemigos atraviesan la pantalla de izquierda a derecha o viceversa
-        if (ladoInicio) {
-            // Si arranca en la izquierda, se mueve hacia la derecha (suma X)
-            this.posicionX += velocidadDesplazamiento;
+        if (moviendoDerecha) {
+            this.posicionX += velocidadHorizontal;
         } else {
-            // Si arranca en la derecha, se mueve hacia la izquierda (resta X)
-            this.posicionX -= velocidadDesplazamiento;
+            this.posicionX -= velocidadHorizontal;
         }
     }
 
-    // El dron es el "Creador" del misil
+    // Método para que rebote contra los bordes
+    public void revertirDireccion() {
+        this.moviendoDerecha = !this.moviendoDerecha;
+    }
+
+    public void actualizarVelocidades(double factorDificultad) {
+        this.velocidadHorizontal *= factorDificultad;
+        this.probabilidadDisparo *= factorDificultad;
+    }
+
+    public boolean verificarDisparo() {
+        // Solo dispara si no está en retirada y si la suerte lo dicta
+        return !retirandose && (Math.random() < probabilidadDisparo);
+    }
+
     public Misil disparar() {
-        // Los misiles descienden en línea recta desde la posición del dron que los lanzó
+        this.municion--;
+        // Si disparó su última bala, se marca en retirada
+        if (this.municion <= 0) {
+            this.retirandose = true;
+        }
         return new Misil(this.posicionX, this.altitud);
     }
 
-    // Método para que el controlador o el escuadrón sepa cuándo crear un misil
-    public boolean verificarDisparo() {
-        // Usamos Math.random() como una forma sencilla de evaluar la frecuencia de disparo
-        return Math.random() < frecuenciaDisparo;
-    }
-
-    // Método para aplicar el incremento de dificultad
-    public void actualizarVelocidades(double factorIncremento) {
-        // Cada nuevo nivel incrementa dichas velocidades en un 15%
-        this.velocidadDesplazamiento *= factorIncremento;
-        this.frecuenciaDisparo *= factorIncremento;
-    }
-
-    // Getters y Setters
-    public boolean isLadoInicio() {
-        return ladoInicio;
-    }
-
-    public void setLadoInicio(boolean ladoInicio) {
-        this.ladoInicio = ladoInicio;
-    }
-
-    public double getVelocidadDesplazamiento() {
-        return velocidadDesplazamiento;
-    }
-
-    public void setVelocidadDesplazamiento(double velocidadDesplazamiento) {
-        this.velocidadDesplazamiento = velocidadDesplazamiento;
-    }
-
-    public double getFrecuenciaDisparo() {
-        return frecuenciaDisparo;
-    }
-
-    public void setFrecuenciaDisparo(double frecuenciaDisparo) {
-        this.frecuenciaDisparo = frecuenciaDisparo;
+    public boolean isRetirandose() {
+        return retirandose;
     }
 }

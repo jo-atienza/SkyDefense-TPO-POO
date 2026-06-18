@@ -1,21 +1,31 @@
 package gui;
-
+import logica.Juego;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class ManejadorTeclado extends KeyAdapter {
+    private Juego juego; //teclado conoce al motor del juego (acoplamiento necesario)
     private boolean izq, der, arriba, abajo, enter;
-
+    public ManejadorTeclado(Juego juego) {
+        this.juego = juego;
+    }
     @Override
     public void keyPressed(KeyEvent e) {
         int tecla = e.getKeyCode();
+        //PAUSA
+        if (tecla == KeyEvent.VK_P) {
+            juego.conmutarPausa();
+        }
+        if (tecla == KeyEvent.VK_ENTER && juego.isEnTransicionNivel()) {
+            juego.confirmarDespegue();
+        }
+        //MOVIMIENTO
         if (tecla == KeyEvent.VK_LEFT) izq = true;
         if (tecla == KeyEvent.VK_RIGHT) der = true;
         if (tecla == KeyEvent.VK_UP) arriba = true;
         if (tecla == KeyEvent.VK_DOWN) abajo = true;
         if (tecla == KeyEvent.VK_ENTER) enter = true;
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         int tecla = e.getKeyCode();
@@ -25,14 +35,10 @@ public class ManejadorTeclado extends KeyAdapter {
         if (tecla == KeyEvent.VK_DOWN) abajo = false;
         if (tecla == KeyEvent.VK_ENTER) enter = false;
     }
-
-    // Getters para que el Panel pueda consultar el estado
     public boolean isIzq() { return izq; }
     public boolean isDer() { return der; }
     public boolean isArriba() { return arriba; }
     public boolean isAbajo() { return abajo; }
     public boolean isEnter() { return enter; }
-
-    // Para apagar el Enter una vez que arrancamos el juego
     public void resetEnter() { this.enter = false; }
 }

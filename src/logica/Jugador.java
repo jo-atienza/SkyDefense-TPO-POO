@@ -1,47 +1,45 @@
 package logica;
 
-import excepciones.*;
 public class Jugador {
-
-    private int puntaje;
     private int vidas;
-    // Variable interna para saber cuándo dar la próxima vida extra
-    private int proximoObjetivoVida;
+    private int puntaje;
+
+    // NUEVO: Definimos el tope máximo de vidas acumulables
+    private static final int MAX_VIDAS = 5;
 
     public Jugador(int vidasIniciales) {
-        if (vidasIniciales <= 0) {
-            throw new ParametroInvalidoException("Las vidas iniciales no pueden ser cero o negativas.");
-        }
-        this.puntaje = 0;
         this.vidas = vidasIniciales;
-        this.proximoObjetivoVida = 1000;
+        this.puntaje = 0;
     }
 
     public void sumarPuntos(int puntos) {
+        int puntajeAnterior = this.puntaje;
         this.puntaje += puntos;
-        obtenerVidaExtra();
+
+        // Lógica para detectar si cruzamos un múltiplo de 1000
+        // Ej: puntajeAnterior era 980 (980/1000 = 0). puntaje nuevo es 1020 (1020/1000 = 1).
+        if ((this.puntaje / 1000) > (puntajeAnterior / 1000)) {
+            ganarVida();
+        }
+    }
+
+    public void ganarVida() {
+        // MODIFICADO: Solo sumamos vida si no llegamos al tope
+        if (this.vidas < MAX_VIDAS) {
+            this.vidas++;
+        }
     }
 
     public void perderVida() {
-        if (this.vidas > 0) {
-            this.vidas--;
-        }
+        this.vidas--;
     }
 
-    public void obtenerVidaExtra() {
-        // Verifica si pasamos la barrera de los 1000, 2000, 3000, etc.
-        if (this.puntaje >= this.proximoObjetivoVida) {
-            this.vidas++;
-            this.proximoObjetivoVida += 1000;
-        }
-    }
-
-    // Getters
-    public int getPuntaje() {
-        return puntaje;
-    }
-
+    // --- GETTERS ---
     public int getVidas() {
         return vidas;
+    }
+
+    public int getPuntaje() {
+        return puntaje;
     }
 }

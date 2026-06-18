@@ -1,5 +1,4 @@
 package logica;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,80 +12,115 @@ public class Juego {
     private SistemaDeDetonacion sistemaDetonacion;
     private boolean juegoTerminado;
     private List<Misil> misilesEnElAire;
+    private List<ExplosionVisual> poolExplosiones;
+    private boolean pausado;
+    private boolean enTransicionNivel;
+    private int escuadronesCompletadosEnNivel;
+    private static final int ESCUADRONES_POR_NIVEL = 2;
 
+    private boolean juegoGanado;
     public Juego() {
         this.jugador = new Jugador(3);
         this.sistemaDetonacion = new SistemaDeDetonacion();
         this.juegoTerminado = false;
+        this.juegoGanado = false; // Inicializamos en falso
         this.nivelActual = new Nivel(1);
+        this.poolExplosiones = new ArrayList<>();
+        this.pausado = false;
+        this.enTransicionNivel = false;
+        this.escuadronesCompletadosEnNivel = 0;
         iniciarNivel();
     }
     public void iniciarNivel() {
         this.escuadron = new Escuadron();
-        this.avion = new Avion(500.0, 1000.0, 100.0); // Posición inicial centrada
+        this.avion = new Avion(500.0, 3000.0, 100.0);
         this.misilesEnElAire = new ArrayList<>();
     }
     public void actualizarEstado() {
-        if (juegoTerminado) {
+        if (juegoTerminado || juegoGanado || pausado || enTransicionNivel) {
             return;
         }
-        // 1. DELEGACIÓN (GRASP): El Escuadrón es el experto, él gestiona sus drones
         escuadron.actualizar(nivelActual.calcularFactor(), misilesEnElAire);
-        // 2. El Juego solo gestiona los elementos globales (misiles cayendo)
         actualizarMisiles();
-        // 3. Verificaciones de reglas de negocio globales
         verificarGameOver();
         verificarFinNivel();
+        Iterator<ExplosionVisual> itEx = poolExplosiones.iterator();
+        while (itEx.hasNext()) {
+            ExplosionVisual ev = itEx.next();
+            ev.decrementarTiempo();
+            if (ev.getTiempoRestante() <= 0) {
+                itEx.remove();
+            }
+        }
     }
     private void actualizarMisiles() {
-        // Actualización de misiles y validación de detonaciones
         Iterator<Misil> iteradorMisiles = misilesEnElAire.iterator();
         while (iteradorMisiles.hasNext()) {
             Misil misil = iteradorMisiles.next();
             misil.mover();
             if (misil.getAltitud() <= misil.getAltitudDetonacion()) {
                 sistemaDetonacion.aplicarEfecto(misil, avion, jugador);
+                this.poolExplosiones.add(new ExplosionVisual(misil.getPosicionX(), misil.getAltitud(), 40));
                 iteradorMisiles.remove();
             }
         }
     }
     public void avanzarNivel() {
+        //Lógica de victoria a los 5 niveles
+        if (this.nivelActual.getNumeroNivel() >= 5) {
+            this.juegoGanado = true;
+            return;
+        }
         this.jugador.sumarPuntos(300);
         this.nivelActual.setNumeroNivel(this.nivelActual.getNumeroNivel() + 1);
+        this.escuadronesCompletadosEnNivel = 0;
+        this.enTransicionNivel = false;
+
         iniciarNivel();
     }
+    public void conmutarPausa() {
+        if (!juegoTerminado && !juegoGanado && !enTransicionNivel) {
+            this.pausado = !this.pausado;
+        }
+    }
+    public void confirmarDespegue() {
+        if (enTransicionNivel) {
+            avanzarNivel();
+        }
+    }
     public void verificarGameOver() {
-        // 1. Si nos quedamos sin energía, se cobra una vida
         if (this.avion.getEnergia() <= 0) {
             this.jugador.perderVida();
 
-            // Si aún nos quedan vidas, restauramos el motor al 100% para seguir
             if (this.jugador.getVidas() > 0) {
                 this.avion.setEnergia(100.0);
             }
         }
-
-        // 2. El Game Over definitivo solo ocurre si las vidas se agotan
         if (this.jugador.getVidas() <= 0) {
             this.juegoTerminado = true;
         }
     }
     public void verificarFinNivel() {
         if (this.escuadron.estaCompleto() && this.escuadron.getDronesActivos() == 0) {
-            avanzarNivel();
+            this.escuadronesCompletadosEnNivel++;
+
+            if (this.escuadronesCompletadosEnNivel >= ESCUADRONES_POR_NIVEL) {
+                this.enTransicionNivel = true;
+            } else {
+                this.escuadron = new Escuadron();
+            }
         }
     }
-    public boolean isJuegoTerminado() {
-        return juegoTerminado;
-    }
-    //UNIFICAMOS LOS MOVIMIENTOS EN UNA SOLA FUNCIÓN
     public void moverAvion(double deltaX, double deltaY) {
-        if (juegoTerminado) {
-            throw new JuegoYaFinalizadoException("Mover Avión (" + deltaX + ", " + deltaY + ")");
-        }
+        if (juegoTerminado || juegoGanado || pausado || enTransicionNivel) return;
         this.avion.mover(deltaX, deltaY);
     }
-    // Getters para el renderizado de la interfaz
+    // --- GETTERS ---
+    public boolean isJuegoTerminado() { return juegoTerminado; }
+    public boolean isJuegoGanado() { return juegoGanado; } // <--- EL GETTER QUE FALTABA
+    public boolean isPausado() { return pausado; }
+    public boolean isEnTransicionNivel() { return enTransicionNivel; }
+    public List<ExplosionVisual> getPoolExplosiones() { return poolExplosiones; }
     public Avion getAvion() { return avion; }
     public Escuadron getEscuadron() { return escuadron; }
     public List<Misil> getMisilesEnElAire() { return misilesEnElAire; }
