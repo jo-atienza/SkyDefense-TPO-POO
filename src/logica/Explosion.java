@@ -5,12 +5,10 @@ public class Explosion {
     private double dañoCalculado;
     private int puntosOtorgados;
     private boolean quitaVida;
-
     // Al crear la explosión, le pasamos la distancia y ella calcula el resto
     public Explosion(double distancia) {
         calcularEfectos(distancia);
     }
-
     private void calcularEfectos(double distancia) {
         if (distancia > 150.0) {
             this.puntosOtorgados = 40;

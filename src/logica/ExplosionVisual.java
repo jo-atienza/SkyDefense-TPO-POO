@@ -10,7 +10,6 @@ public class ExplosionVisual {
         this.altitud = altitud;
         this.tiempoRestante = duracionFrames;
     }
-
     public void decrementarTiempo() { this.tiempoRestante--; }
     public double getPosicionX() { return posicionX; }
     public double getAltitud() { return altitud; }

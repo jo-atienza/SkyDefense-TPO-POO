@@ -1,12 +1,9 @@
 package logica;
-
 import excepciones.AltitudFueraDeRangoException;
 import excepciones.ParametroInvalidoException;
 
 public class Avion extends EntidadMovil {
-
     private double energia;
-
     private static final double ALTITUD_MINIMA = 1000.0;
     private static final double ALTITUD_MAXIMA = 5000.0;
 
@@ -21,17 +18,14 @@ public class Avion extends EntidadMovil {
         this.energia = energiaInicial;
         limitarPosicion();
     }
-
     @Override
     public void mover() {
     }
-
     public void mover(double deltaX, double deltaY) {
         this.posicionX += deltaX;
         this.altitud += deltaY;
         limitarPosicion();
     }
-
     private void limitarPosicion() {
         // Límites horizontales adaptados a 1200 de ancho (1200 - 70 tamaño avión)
         if (this.posicionX < 0) {
@@ -39,7 +33,6 @@ public class Avion extends EntidadMovil {
         } else if (this.posicionX > 1130) {
             this.posicionX = 1130;
         }
-
         // Límites verticales
         if (this.altitud < ALTITUD_MINIMA) {
             this.altitud = ALTITUD_MINIMA;
@@ -47,7 +40,6 @@ public class Avion extends EntidadMovil {
             this.altitud = ALTITUD_MAXIMA;
         }
     }
-
     public void recibirDaño(double porcentajeDaño) {
         double energiaPerdida = 100.0 * porcentajeDaño;
         this.energia -= energiaPerdida;
@@ -56,11 +48,9 @@ public class Avion extends EntidadMovil {
             this.energia = 0;
         }
     }
-
     public double getEnergia() {
         return energia;
     }
-
     public void setEnergia(double energia) {
         this.energia = energia;
     }
