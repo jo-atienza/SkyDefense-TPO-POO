@@ -112,7 +112,12 @@ public class Juego {
         }
     }
     public void moverAvion(double deltaX, double deltaY) {
-        if (juegoTerminado || juegoGanado || pausado || enTransicionNivel) return;
+        if (juegoTerminado || juegoGanado){
+            throw new JuegoYaFinalizadoException("Intento mover el avion con la partida finalizada.");
+            }
+        if ( pausado || enTransicionNivel) {
+            return;
+        }
         this.avion.mover(deltaX, deltaY);
     }
     // --- GETTERS ---

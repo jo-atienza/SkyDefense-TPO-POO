@@ -10,6 +10,7 @@ public class Nivel {
     // Constructor
     public Nivel(int numeroNivel) {
         // Validamos que por error no se cree un nivel 0 o negativo
+
         if (numeroNivel < 1) {
             this.numeroNivel = 1;
         } else {

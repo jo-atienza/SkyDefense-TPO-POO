@@ -1,6 +1,7 @@
 package logica;
 
 import excepciones.AltitudFueraDeRangoException;
+import excepciones.ParametroInvalidoException;
 
 public class Avion extends EntidadMovil {
 
@@ -13,6 +14,9 @@ public class Avion extends EntidadMovil {
         super(posicionX, altitud);
         if (altitud < 1000.0 || altitud > 5000.0) {
             throw new AltitudFueraDeRangoException(altitud);
+        }
+        if (energiaInicial<= 0) {
+            throw new ParametroInvalidoException("La energia inicial debe ser mayor que 0");
         }
         this.energia = energiaInicial;
         limitarPosicion();

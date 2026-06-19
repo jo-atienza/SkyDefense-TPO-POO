@@ -1,5 +1,6 @@
 package gui;
 
+import excepciones.RecursoVisualNoEncontradoException;
 import logica.*;
 import logica.Dron;
 import logica.Misil;
@@ -36,7 +37,7 @@ public class RenderizadorVisual {
             try {
                 this.fondos[i] = ImageIO.read(new File(rutasFondos[i]));
             } catch (IOException e) {
-                System.out.println("No se pudo cargar el fondo: " + rutasFondos[i]);
+                throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
             }
         }
         try {
@@ -44,7 +45,7 @@ public class RenderizadorVisual {
             this.imagenDron = ImageIO.read(new File("src/recursos/dron.png"));
             this.imagenExplosion = ImageIO.read(new File("src/recursos/explosion.png"));
         } catch (IOException e) {
-            System.out.println("Error al cargar las texturas de juego.");
+            throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
         }
     }
 

@@ -1,5 +1,7 @@
 package logica;
 
+import excepciones.ParametroInvalidoException;
+
 public class Jugador {
     private int vidas;
     private int puntaje;
@@ -8,6 +10,9 @@ public class Jugador {
     private static final int MAX_VIDAS = 5;
 
     public Jugador(int vidasIniciales) {
+        if (vidasIniciales<=0){
+            throw new ParametroInvalidoException("El valor de vidas iniciales no debe ser menor o igual que 0");
+        }
         this.vidas = vidasIniciales;
         this.puntaje = 0;
     }
