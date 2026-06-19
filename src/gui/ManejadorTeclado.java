@@ -12,12 +12,15 @@ public class ManejadorTeclado extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent e) {
         int tecla = e.getKeyCode();
-        //PAUSA
-        if (tecla == KeyEvent.VK_P) {
-            juego.conmutarPausa();
-        }
-        if (tecla == KeyEvent.VK_ENTER && juego.isEnTransicionNivel()) {
-            juego.confirmarDespegue();
+        if (tecla == KeyEvent.VK_ENTER) {
+            //Si estamos en la pantalla intermedia esto nos permite empezar
+            if (juego.isEnTransicionNivel()){
+                juego.confirmarDespegue();
+            }
+            //Sino si estamos en pleno juego, esto nos permite pausar/despausar
+            else {
+                juego.conmutarPausa();
+            }
         }
         //MOVIMIENTO
         if (tecla == KeyEvent.VK_LEFT) izq = true;
