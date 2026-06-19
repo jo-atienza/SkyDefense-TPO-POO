@@ -18,12 +18,10 @@ public class RenderizadorVisual {
     private Image imagenDron;
     private Image imagenExplosion;
     private Image[] fondos;
-
     public RenderizadorVisual() {
         this.fondos = new Image[5];
         cargarRecursos();
     }
-
     private void cargarRecursos() {
         // Rutas exactas de fondos
         String[] rutasFondos = {
@@ -69,15 +67,13 @@ public class RenderizadorVisual {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 1200, 700);
         }
-
         // DIBUJA EL AVIÓN
         int posAvionX = (int) juego.getAvion().getPosicionX();
         int posAvionY = 700 - (int) (juego.getAvion().getAltitud() / 10);
         if (imagenAvion != null) {
-            // Agrandamos a 70x70 y lo centramos restando la mitad (35)
+            // Agrandamos a 70x70 y lo centramos
             g.drawImage(imagenAvion, posAvionX - 35, posAvionY - 35, 70, 70, null);
         }
-
         // DIBUJA DRONES
         for (Dron dron : juego.getEscuadron().getDrones()) {
             int dronX = (int) dron.getPosicionX();
@@ -87,7 +83,6 @@ public class RenderizadorVisual {
                 g.drawImage(imagenDron, dronX - 30, dronY - 30, 60, 60, null);
             }
         }
-
         //DIBUJA MISILES Y EXPLOSIONES
         g.setColor(Color.YELLOW);
         for (Misil misil : juego.getMisilesEnElAire()) {
@@ -103,24 +98,20 @@ public class RenderizadorVisual {
                 g.drawImage(imagenExplosion, expX - (tFinal/2), expY - (tFinal/2), tFinal, tFinal, null);
             }
         }
-
-        //Textos HUD
+        //Informacion del jugador en la partida
         Font fuenteArcade = new Font("Monospaced", Font.BOLD, 18);
         g.setFont(fuenteArcade);
-
         g.setColor(Color.BLACK);
         g.drawString("Puntaje: " + juego.getJugador().getPuntaje(), 22, 32);
         g.drawString("Vidas: " + juego.getJugador().getVidas(), 202, 32);
         g.drawString("Energía: " + (int) juego.getAvion().getEnergia() + "%", 352, 32);
         g.drawString("Nivel: " + nivelActual, 1052, 32);
-
         g.setColor(Color.WHITE);
         g.drawString("Puntaje: " + juego.getJugador().getPuntaje(), 20, 30);
         g.drawString("Vidas: " + juego.getJugador().getVidas(), 200, 30);
         g.drawString("Energía: " + (int) juego.getAvion().getEnergia() + "%", 350, 30);
         g.drawString("Nivel: " + nivelActual, 1050, 30);
-
-        //CARTELES DE ESTADO
+        //CARTELES DE TRANSICION
         if (juego.isJuegoGanado()) {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, 1200, 700);
