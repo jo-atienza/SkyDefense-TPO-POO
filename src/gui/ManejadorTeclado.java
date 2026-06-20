@@ -11,15 +11,12 @@ public class ManejadorTeclado extends KeyAdapter {
     public ManejadorTeclado(Juego juego) {
         this.juego = juego;
     }
-
     @Override
     public void keyPressed(KeyEvent e) {
         int tecla = e.getKeyCode();
-
         if (tecla == KeyEvent.VK_ENTER) {
             // 1. Levantamos la bandera para que PanelJuego la lea y salga del menú
             this.enter = true;
-
             // 2. Lógica de transiciones y pausa dentro del juego
             if (juego.isEnTransicionNivel()) {
                 juego.confirmarDespegue();
@@ -27,32 +24,26 @@ public class ManejadorTeclado extends KeyAdapter {
                 juego.conmutarPausa();
             }
         }
-
         // Controles de movimiento
         if (tecla == KeyEvent.VK_LEFT) izq = true;
         if (tecla == KeyEvent.VK_RIGHT) der = true;
         if (tecla == KeyEvent.VK_UP) arriba = true;
         if (tecla == KeyEvent.VK_DOWN) abajo = true;
     }
-
     @Override
     public void keyReleased(KeyEvent e) {
         int tecla = e.getKeyCode();
-
         if (tecla == KeyEvent.VK_LEFT) izq = false;
         if (tecla == KeyEvent.VK_RIGHT) der = false;
         if (tecla == KeyEvent.VK_UP) arriba = false;
         if (tecla == KeyEvent.VK_DOWN) abajo = false;
         // El enter no se apaga acá, lo resetea el PanelJuego con resetEnter()
     }
-
     // --- GETTERS ---
     public boolean isIzq() { return izq; }
     public boolean isDer() { return der; }
     public boolean isArriba() { return arriba; }
     public boolean isAbajo() { return abajo; }
     public boolean isEnter() { return enter; }
-
-    // Lo usa el PanelJuego para bajar la bandera del enter
     public void resetEnter() { this.enter = false; }
 }

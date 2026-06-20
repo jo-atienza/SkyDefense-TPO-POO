@@ -1,5 +1,4 @@
 package gui;
-
 import excepciones.RecursoVisualNoEncontradoException;
 import logica.*;
 import logica.Dron;
@@ -52,7 +51,6 @@ public class RenderizadorVisual {
             throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
         }
     }
-
     public void dibujarMenu(Graphics g) {
         if (fondoMenu!=null) {
             g.drawImage(fondoMenu, 0, 0, 1200, 700, null);
