@@ -18,12 +18,13 @@ public class RenderizadorVisual {
     private Image imagenDron;
     private Image imagenExplosion;
     private Image[] fondos;
+    private Image fondoMenu;
     public RenderizadorVisual() {
         this.fondos = new Image[5];
         cargarRecursos();
     }
     private void cargarRecursos() {
-        // Rutas exactas de fondos
+        // Rutas exactas de fondos de nivel
         String[] rutasFondos = {
                 "src/recursos/Amanecer-Nivel1.png",
                 "src/recursos/Mediodia-Nivel 2.png",
@@ -38,6 +39,11 @@ public class RenderizadorVisual {
                 throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
             }
         }
+        try{
+            this.fondoMenu=ImageIO.read(new File("src/recursos/SkyDefense.png"));
+        }catch (IOException e) {
+            throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
+        }
         try {
             this.imagenAvion = ImageIO.read(new File("src/recursos/avion.png"));
             this.imagenDron = ImageIO.read(new File("src/recursos/dron.png"));
@@ -48,13 +54,16 @@ public class RenderizadorVisual {
     }
 
     public void dibujarMenu(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 1200, 700);
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 50));
-        g.drawString("SKY DEFENSE", 410, 250);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        g.drawString("Presiona ENTER para despegar", 450, 320);
+        if (fondoMenu!=null) {
+            g.drawImage(fondoMenu, 0, 0, 1200, 700, null);
+        }else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, 1200, 700);
+        }
+
+        g.setColor(new Color(254, 234, 169));
+        g.setFont(new Font("Monospaced", Font.BOLD, 30));
+        g.drawString("Presiona ENTER para despegar", 350, 300);
     }
 
     public void dibujarJuego(Graphics g, Juego juego) {
@@ -71,7 +80,6 @@ public class RenderizadorVisual {
         int posAvionX = (int) juego.getAvion().getPosicionX();
         int posAvionY = 700 - (int) (juego.getAvion().getAltitud() / 10);
         if (imagenAvion != null) {
-            // Agrandamos a 70x70 y lo centramos
             g.drawImage(imagenAvion, posAvionX - 35, posAvionY - 35, 70, 70, null);
         }
         // DIBUJA DRONES
@@ -79,7 +87,6 @@ public class RenderizadorVisual {
             int dronX = (int) dron.getPosicionX();
             int dronY = 700 - (int) (dron.getAltitud() / 10);
             if (imagenDron != null) {
-                // Agrandamos a 60x60
                 g.drawImage(imagenDron, dronX - 30, dronY - 30, 60, 60, null);
             }
         }
@@ -119,7 +126,7 @@ public class RenderizadorVisual {
             g.setFont(new Font("Monospaced", Font.BOLD, 50));
             g.drawString("¡MISIÓN CUMPLIDA!", 340, 280);
             g.setFont(new Font("Monospaced", Font.PLAIN, 20));
-            g.drawString("Has defendido los cielos exitosamente.", 360, 330);
+            g.drawString("Lograste sobrevivir los ataques enemigos.", 340, 330);
         } else if (juego.isJuegoTerminado()) {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, 1200, 700);

@@ -16,9 +16,10 @@ public class Juego {
     private boolean pausado;
     private boolean enTransicionNivel;
     private int escuadronesCompletadosEnNivel;
-    private static final int ESCUADRONES_POR_NIVEL = 2;
+    private static final int ESCUADRONES_POR_NIVEL = 1;
 
     private boolean juegoGanado;
+
     public Juego() {
         this.jugador = new Jugador(3);
         this.sistemaDetonacion = new SistemaDeDetonacion();
@@ -31,11 +32,13 @@ public class Juego {
         this.escuadronesCompletadosEnNivel = 0;
         iniciarNivel();
     }
+
     public void iniciarNivel() {
         this.escuadron = new Escuadron();
         this.avion = new Avion(500.0, 3000.0, 100.0);
         this.misilesEnElAire = new ArrayList<>();
     }
+
     public void actualizarEstado() {
         if (juegoTerminado || juegoGanado || pausado || enTransicionNivel) {
             return;
@@ -53,6 +56,7 @@ public class Juego {
             }
         }
     }
+
     private void actualizarMisiles() {
         Iterator<Misil> iteradorMisiles = misilesEnElAire.iterator();
         while (iteradorMisiles.hasNext()) {
@@ -65,29 +69,29 @@ public class Juego {
             }
         }
     }
-    public void avanzarNivel() {
-        //Lógica de victoria a los 5 niveles
-        if (this.nivelActual.getNumeroNivel() >= 5) {
-            this.juegoGanado = true;
-            return;
-        }
-        this.jugador.sumarPuntos(300);
-        this.nivelActual.setNumeroNivel(this.nivelActual.getNumeroNivel() + 1);
-        this.escuadronesCompletadosEnNivel = 0;
-        this.enTransicionNivel = false;
 
-        iniciarNivel();
+    public void avanzarNivel() {
+        // La victoria ya se evaluó antes, acá solo hacemos el pase limpio de nivel normal
+        if (this.nivelActual.getNumeroNivel() < 5) {
+            this.nivelActual.setNumeroNivel(this.nivelActual.getNumeroNivel() + 1);
+            this.escuadronesCompletadosEnNivel = 0;
+            this.enTransicionNivel = false;
+            iniciarNivel();
+        }
     }
+
     public void conmutarPausa() {
         if (!juegoTerminado && !juegoGanado && !enTransicionNivel) {
             this.pausado = !this.pausado;
         }
     }
+
     public void confirmarDespegue() {
         if (enTransicionNivel) {
             avanzarNivel();
         }
     }
+
     public void verificarGameOver() {
         if (this.avion.getEnergia() <= 0) {
             this.jugador.perderVida();
@@ -100,29 +104,45 @@ public class Juego {
             this.juegoTerminado = true;
         }
     }
+
     public void verificarFinNivel() {
         if (this.escuadron.estaCompleto() && this.escuadron.getDronesActivos() == 0) {
             this.escuadronesCompletadosEnNivel++;
 
             if (this.escuadronesCompletadosEnNivel >= ESCUADRONES_POR_NIVEL) {
-                this.enTransicionNivel = true;
+
+                // Le damos los puntos al jugador apenas limpia la pantalla
+                this.jugador.sumarPuntos(300);
+
+                // --- ARREGLO DEL BUG DE NIVEL 6 ---
+                if (this.nivelActual.getNumeroNivel() >= 5) {
+                    // Si limpió el Nivel 5, salta la victoria directa
+                    this.juegoGanado = true;
+                    this.enTransicionNivel = false; // Bloquea la pantalla verde de oleada completada
+                } else {
+                    // Si es nivel 1, 2, 3 o 4, muestra el cartel para despegar
+                    this.enTransicionNivel = true;
+                }
+
             } else {
                 this.escuadron = new Escuadron();
             }
         }
     }
+
     public void moverAvion(double deltaX, double deltaY) {
         if (juegoTerminado || juegoGanado){
             throw new JuegoYaFinalizadoException("Intento mover el avion con la partida finalizada.");
-            }
-        if ( pausado || enTransicionNivel) {
+        }
+        if (pausado || enTransicionNivel) {
             return;
         }
         this.avion.mover(deltaX, deltaY);
     }
+
     // --- GETTERS ---
     public boolean isJuegoTerminado() { return juegoTerminado; }
-    public boolean isJuegoGanado() { return juegoGanado; } // <--- EL GETTER QUE FALTABA
+    public boolean isJuegoGanado() { return juegoGanado; }
     public boolean isPausado() { return pausado; }
     public boolean isEnTransicionNivel() { return enTransicionNivel; }
     public List<ExplosionVisual> getPoolExplosiones() { return poolExplosiones; }
