@@ -19,7 +19,7 @@ public class Juego {
 
     public Juego() {
         this.jugador = new Jugador(3);
-        this.sistemaDetonacion = new SistemaDeDetonacion();
+        this.sistemaDetonacion = SistemaDeDetonacion.getInstance();
         this.juegoTerminado = false;
         this.juegoGanado = false;
         this.nivelActual = new Nivel(1);
