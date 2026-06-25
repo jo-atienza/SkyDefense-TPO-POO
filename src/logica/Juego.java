@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import excepciones.*;
 
-public class Juego {
+public class Juego implements Renderizable {
     private Nivel nivelActual;
     private Jugador jugador;
     private Escuadron escuadron;
@@ -28,12 +28,12 @@ public class Juego {
         this.enTransicionNivel = false;
         iniciarNivel();
     }
+
     public void iniciarNivel() {
         this.escuadron = new Escuadron();
         this.avion = new Avion(500.0, 3000.0, 100.0);
         this.misilesEnElAire = new ArrayList<>();
     }
-    // Métodos de actualización individuales independientes
     public void actualizarEstado() {
         if (juegoTerminado || juegoGanado || pausado || enTransicionNivel) {
             return;
@@ -98,10 +98,8 @@ public class Juego {
         }
     }
     public void verificarFinNivel() {
-        // Al eliminarse los contadores obsoletos, la verificación queda limpia y cohesiva
         if (this.escuadron.estaCompleto() && this.escuadron.getDronesActivos() == 0) {
             this.jugador.sumarPuntos(300);
-
             if (this.nivelActual.getNumeroNivel() >= 5) {
                 this.juegoGanado = true;
                 this.enTransicionNivel = false;
@@ -111,7 +109,7 @@ public class Juego {
         }
     }
     public void moverAvion(double deltaX, double deltaY) {
-        if (juegoTerminado || juegoGanado){
+        if (juegoTerminado || juegoGanado) {
             throw new JuegoYaFinalizadoException("Intento mover el avion con la partida finalizada.");
         }
         if (pausado || enTransicionNivel) {
@@ -119,15 +117,56 @@ public class Juego {
         }
         this.avion.mover(deltaX, deltaY);
     }
-    // --- GETTERS ---
-    public boolean isJuegoTerminado() { return juegoTerminado; }
+    // IMPLEMENTACIÓN DE Renderizable
+    // La vista usa estos métodos en lugar de acceder a Juego directamente.
+    @Override
+    public List<Dron> getDrones() {
+        return escuadron.getDrones();
+    }
+    @Override
+    public List<Misil> getMisilesEnElAire() {
+        return misilesEnElAire;
+    }
+    @Override
+    public List<ExplosionVisual> getExplosiones() {
+        return poolExplosiones;
+    }
+    @Override
+    public double getAvionX() {
+        return avion.getPosicionX();
+    }
+    @Override
+    public double getAvionAltitud() {
+        return avion.getAltitud();
+    }
+    @Override
+    public double getAvionEnergia() {
+        return avion.getEnergia();
+    }
+    @Override
+    public int getVidas() {
+        return jugador.getVidas();
+    }
+    @Override
+    public int getPuntaje() {
+        return jugador.getPuntaje();
+    }
+    @Override
+    public int getNumeroNivel() {
+        return nivelActual.getNumeroNivel();
+    }
+    @Override
     public boolean isJuegoGanado() { return juegoGanado; }
+    @Override
+    public boolean isJuegoTerminado() { return juegoTerminado; }
+    @Override
     public boolean isPausado() { return pausado; }
+    @Override
     public boolean isEnTransicionNivel() { return enTransicionNivel; }
-    public List<ExplosionVisual> getPoolExplosiones() { return poolExplosiones; }
+    // GETTERS INTERNOS (solo para clases del paquete logica), PanelJuego las necesita  para la lógica de control
     public Avion getAvion() { return avion; }
     public Escuadron getEscuadron() { return escuadron; }
-    public List<Misil> getMisilesEnElAire() { return misilesEnElAire; }
     public Jugador getJugador() { return jugador; }
     public Nivel getNivelActual() { return nivelActual; }
+    public List<ExplosionVisual> getPoolExplosiones() { return poolExplosiones; }
 }

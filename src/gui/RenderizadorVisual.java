@@ -1,9 +1,7 @@
 package gui;
+
 import excepciones.RecursoVisualNoEncontradoException;
 import logica.*;
-import logica.Dron;
-import logica.Misil;
-import logica.ExplosionVisual;
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,12 +16,12 @@ public class RenderizadorVisual {
     private Image imagenExplosion;
     private Image[] fondos;
     private Image fondoMenu;
+
     public RenderizadorVisual() {
         this.fondos = new Image[5];
         cargarRecursos();
     }
     private void cargarRecursos() {
-        // Rutas exactas de fondos de nivel
         String[] rutasFondos = {
                 "src/recursos/Amanecer-Nivel1.png",
                 "src/recursos/Mediodia-Nivel 2.png",
@@ -38,35 +36,34 @@ public class RenderizadorVisual {
                 throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
             }
         }
-        try{
-            this.fondoMenu=ImageIO.read(new File("src/recursos/SkyDefense.png"));
-        }catch (IOException e) {
+        try {
+            this.fondoMenu = ImageIO.read(new File("src/recursos/SkyDefense.png"));
+        } catch (IOException e) {
             throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
         }
         try {
-            this.imagenAvion = ImageIO.read(new File("src/recursos/avion.png"));
-            this.imagenDron = ImageIO.read(new File("src/recursos/dron.png"));
+            this.imagenAvion    = ImageIO.read(new File("src/recursos/avion.png"));
+            this.imagenDron     = ImageIO.read(new File("src/recursos/dron.png"));
             this.imagenExplosion = ImageIO.read(new File("src/recursos/explosion.png"));
         } catch (IOException e) {
             throw new RecursoVisualNoEncontradoException("No se encontro el recurso visual determinado");
         }
     }
     public void dibujarMenu(Graphics g) {
-        if (fondoMenu!=null) {
+        if (fondoMenu != null) {
             g.drawImage(fondoMenu, 0, 0, 1200, 700, null);
-        }else {
+        } else {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 1200, 700);
         }
-
         g.setColor(new Color(254, 234, 169));
         g.setFont(new Font("Monospaced", Font.BOLD, 30));
         g.drawString("Presiona ENTER para despegar", 350, 300);
     }
-
-    public void dibujarJuego(Graphics g, Juego juego) {
-        // FONDO SEGUN NIVEL
-        int nivelActual = juego.getNivelActual().getNumeroNivel();
+    //MODIFICADO: recibe Renderizable en lugar de Juego.Ya no accede a juego.getAvion(), juego.getEscuadron(), etc.
+    public void dibujarJuego(Graphics g, Renderizable estado) {
+        // FONDO SEGÚN NIVEL
+        int nivelActual = estado.getNumeroNivel();
         int indiceFondo = nivelActual - 1;
         if (indiceFondo >= 0 && indiceFondo < fondos.length && fondos[indiceFondo] != null) {
             g.drawImage(fondos[indiceFondo], 0, 0, 1200, 700, null);
@@ -75,49 +72,50 @@ public class RenderizadorVisual {
             g.fillRect(0, 0, 1200, 700);
         }
         // DIBUJA EL AVIÓN
-        int posAvionX = (int) juego.getAvion().getPosicionX();
-        int posAvionY = 700 - (int) (juego.getAvion().getAltitud() / 10);
+        int posAvionX = (int) estado.getAvionX();
+        int posAvionY = 700 - (int) (estado.getAvionAltitud() / 10);
         if (imagenAvion != null) {
             g.drawImage(imagenAvion, posAvionX - 35, posAvionY - 35, 70, 70, null);
         }
         // DIBUJA DRONES
-        for (Dron dron : juego.getEscuadron().getDrones()) {
+        for (Dron dron : estado.getDrones()) {
             int dronX = (int) dron.getPosicionX();
             int dronY = 700 - (int) (dron.getAltitud() / 10);
             if (imagenDron != null) {
                 g.drawImage(imagenDron, dronX - 30, dronY - 30, 60, 60, null);
             }
         }
-        //DIBUJA MISILES Y EXPLOSIONES
+        // DIBUJA MISILES
         g.setColor(Color.YELLOW);
-        for (Misil misil : juego.getMisilesEnElAire()) {
+        for (Misil misil : estado.getMisilesEnElAire()) {
             int misilX = (int) misil.getPosicionX();
             int misilY = 700 - (int) (misil.getAltitud() / 10);
             g.fillOval(misilX - 5, misilY - 10, 10, 20);
         }
+        // DIBUJA EXPLOSIONES
         if (imagenExplosion != null) {
-            for (ExplosionVisual ev : juego.getPoolExplosiones()) {
+            for (ExplosionVisual ev : estado.getExplosiones()) {
                 int expX = (int) ev.getPosicionX();
                 int expY = 700 - (int) (ev.getAltitud() / 10);
                 int tFinal = 60 + ((40 - ev.getTiempoRestante()) / 2);
-                g.drawImage(imagenExplosion, expX - (tFinal/2), expY - (tFinal/2), tFinal, tFinal, null);
+                g.drawImage(imagenExplosion, expX - (tFinal / 2), expY - (tFinal / 2), tFinal, tFinal, null);
             }
         }
-        //Informacion del jugador en la partida
+        // INFORMACIÓN DEL JUGADOR
         Font fuenteArcade = new Font("Monospaced", Font.BOLD, 18);
         g.setFont(fuenteArcade);
         g.setColor(Color.BLACK);
-        g.drawString("Puntaje: " + juego.getJugador().getPuntaje(), 22, 32);
-        g.drawString("Vidas: " + juego.getJugador().getVidas(), 202, 32);
-        g.drawString("Energía: " + (int) juego.getAvion().getEnergia() + "%", 352, 32);
-        g.drawString("Nivel: " + nivelActual, 1052, 32);
+        g.drawString("Puntaje: " + estado.getPuntaje(),          22, 32);
+        g.drawString("Vidas: "   + estado.getVidas(),            202, 32);
+        g.drawString("Energía: " + (int) estado.getAvionEnergia() + "%", 352, 32);
+        g.drawString("Nivel: "   + nivelActual,                  1052, 32);
         g.setColor(Color.WHITE);
-        g.drawString("Puntaje: " + juego.getJugador().getPuntaje(), 20, 30);
-        g.drawString("Vidas: " + juego.getJugador().getVidas(), 200, 30);
-        g.drawString("Energía: " + (int) juego.getAvion().getEnergia() + "%", 350, 30);
-        g.drawString("Nivel: " + nivelActual, 1050, 30);
-        //CARTELES DE TRANSICION
-        if (juego.isJuegoGanado()) {
+        g.drawString("Puntaje: " + estado.getPuntaje(),          20, 30);
+        g.drawString("Vidas: "   + estado.getVidas(),            200, 30);
+        g.drawString("Energía: " + (int) estado.getAvionEnergia() + "%", 350, 30);
+        g.drawString("Nivel: "   + nivelActual,                  1050, 30);
+        // CARTELES DE TRANSICIÓN
+        if (estado.isJuegoGanado()) {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, 1200, 700);
             g.setColor(Color.WHITE);
@@ -125,17 +123,17 @@ public class RenderizadorVisual {
             g.drawString("¡MISIÓN CUMPLIDA!", 340, 280);
             g.setFont(new Font("Monospaced", Font.PLAIN, 20));
             g.drawString("Lograste sobrevivir los ataques enemigos.", 340, 330);
-        } else if (juego.isJuegoTerminado()) {
+        } else if (estado.isJuegoTerminado()) {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, 1200, 700);
             g.setColor(Color.RED);
             g.setFont(new Font("Monospaced", Font.BOLD, 60));
             g.drawString("GAME OVER", 430, 300);
-        } else if (juego.isPausado()) {
+        } else if (estado.isPausado()) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Monospaced", Font.BOLD, 60));
             g.drawString("PAUSA", 500, 300);
-        } else if (juego.isEnTransicionNivel()) {
+        } else if (estado.isEnTransicionNivel()) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Monospaced", Font.BOLD, 40));
             g.drawString("¡OLEADA COMPLETADA!", 380, 260);
